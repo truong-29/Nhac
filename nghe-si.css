@@ -1,0 +1,139 @@
+/* Styling for the popup */
+.swal2-popup {
+    border-radius: 16px;
+    /* Bo góc lớn hơn, giống hình ảnh */
+    padding: 30px;
+    /* Tăng padding để tạo không gian thoải mái */
+    color: #2d3748;
+    /* Màu chữ xám đậm cho tiêu đề, dễ đọc và hài hòa */
+    min-height: 500px;
+    /* Giữ chiều cao tối thiểu để phù hợp với nội dung */
+    max-height: 700px;
+    /* Giới hạn chiều cao tối đa để tránh quá dài */
+    min-width: 800px;
+    max-width: 1000px;
+    overflow-y: auto;
+    /* Thêm thanh cuộn nếu nội dung quá dài */
+    display: flex;
+    /* Sử dụng flexbox để căn giữa nội dung */
+    align-items: center;
+    /* Căn dọc giữa */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Thêm bóng nhẹ để nổi bật */
+}
+
+.swal2-title {
+    color: #000000;
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: bold;
+    padding: 0;
+    width: 100%;
+}
+
+.swal2-content {
+    display: flex;
+    /* Sử dụng flexbox cho nội dung */
+    align-items: center;
+    /* Căn dọc giữa nội dung với avatar */
+    justify-content: center;
+    /* Căn ngang giữa nội dung */
+    width: 100%;
+    /* Đảm bảo nội dung chiếm toàn bộ chiều rộng còn lại */
+    flex-direction: row;
+    /* Đảm bảo avatar và nội dung nằm ngang */
+}
+
+.swal2-content li {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+}
+
+.swal2-content li::before {
+    content: "•";
+    margin-right: 10px;
+    color: #2d3748;
+}
+
+.swal2-content li span {
+    flex: 0 0 120px;
+    font-weight: 500;
+}
+
+.swal2-content ul {
+    list-style-type: none;
+    margin-left: 40px;
+    color: #2d3748;
+    margin-top: 0;
+    padding: 0;
+    max-width: 600px;
+}
+
+.info-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 0 30px;
+}
+
+.info-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    color: #2d3748;
+    flex: 1;
+}
+
+.info-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 1.25rem;
+    position: relative;
+    padding-left: 15px;
+    color: #000000;
+}
+
+.info-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #000000;
+}
+
+.info-list .label {
+    color: #000000;
+    width: 300px;
+    flex-shrink: 0;
+    font-weight: bold;
+    padding-left: 10px;
+    text-align: left;
+}
+
+.info-list .value {
+    flex: 1;
+    text-align: left;
+    padding-left: 20px;
+    color: #000000;
+}
+
+.avatar {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+}
+
+.playlist-item {
+    width: 160px !important;
+    height: 160px !important;
+    object-fit: cover;
+}

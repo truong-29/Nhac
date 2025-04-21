@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music App</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet" />
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom CSS -->
+    <link href="nhac.css" rel="stylesheet" /><link href="nghe-si.css" rel="stylesheet" />
+  </head>
+  <!-- Đảm bảo sửa onload ra khỏi class -->
+  <body class="bg-gray-900 text-white" onload="checkSession()">
+    <!-- Màn hình loading -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    </div>
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <div class="bg-gray-800 text-white w-1/5 p-4 flex flex-col justify-between">
+        <div>
+          <!-- Form đăng nhập -->
+          <div id="login-form" class="mb-6">
+            <h2 class="text-lg font-bold mb-2">Đăng nhập</h2>
+            <input id="username" class="w-full p-2 mb-2 rounded bg-gray-700" type="text" placeholder="Tài khoản" />
+            <input id="password" class="w-full p-2 mb-2 rounded bg-gray-700" type="password" placeholder="Mật khẩu" />
+            <button onclick="checkLogin()" class="w-full bg-blue-500 text-white px-4 py-2 rounded transition hover:bg-blue-700">Đăng nhập</button>
+          </div>
+          <!-- Thông tin người dùng (ẩn nếu chưa đăng nhập) -->
+          <div id="user-info" class="hidden">
+            <div class="flex items-center mb-6">
+              <img alt="User avatar" class="rounded-full mr-2" height="50" src="https://storage.googleapis.com/a1aa/image/t8Fv8R63E4Rb2PtstNHWbhnoQPO6MJbUIrYhIWlNkTA.jpg" width="50" />
+              <span>Tài khoản</span>
+            </div>
+          </div>
+          <!-- MENU -->
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold mb-2"><a href="index.html" class="hover:text-blue-400 transition">MENU</a></h2>
+            <ul>
+              <li class="mb-2 text-lg font-semibold"><a href="nhac.html" class="hover:text-blue-400 transition">Nhạc</a></li>
+              <li class="mb-2 text-lg font-semibold"><a href="nghe-si.html" class="hover:text-blue-400 transition">Nghệ sĩ</a></li>
+              <li class="mb-2 text-lg font-semibold"><a href="podcast.html" class="hover:text-blue-400 transition">Podcast</a></li>
+              <li class="mb-2 text-lg font-semibold"><a href="thong-tin-phat-trien-trang-web.html" class="hover:text-blue-400 transition">Thông tin phát triển trang web</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Chart (Truy cập trong tuần) -->
+        <div class="w-full p-4 bg-gray-900 rounded-lg">
+          <h2 class="text-white text-lg font-bold">Truy cập trong tuần</h2>
+          <div id="traffic-chart" class="flex items-end h-60 space-x-2"></div>
+        </div>
+      </div>
+      <!-- Main Content -->
+      <div class="w-4/5 p-4">
+        <!-- Tìm kiếm -->
+        <div class="flex items-center justify-end mb-6">
+          <div class="relative w-3/5">
+            <input class="w-full p-2 rounded-full border border-gray-300 bg-gray-800 text-white pl-10" placeholder="Tìm kiếm bài hát, nghệ sĩ, podcast,.." type="text" />
+            <i class="fas fa-search absolute left-3 top-3 text-gray-500"></i>
+            <i class="fas fa-microphone absolute right-3 top-3 text-gray-500"></i>
+          </div>
+        </div>
+        <!-- TOP 10 KÊNH PODCAST -->
+        <h2 class="text-xl font-bold mb-4 text-left">
+          <span class="inline-block mr-2 align-middle">✨</span>TOP 10 KÊNH PODCAST TRUYỀN CẢM HỨNG CỦA THÁNG!
+        </h2>
+        <!-- Carousel -->
+        <div class="relative">
+          <!-- Nút trái -->
+          <button id="prevBtn" class="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full"><i class="fas fa-chevron-left"></i></button>
+          <!-- Khung chứa danh sách podcast -->
+          <div class="overflow-hidden">
+            <div id="carousel" class="flex transition-transform duration-500">
+              <!-- 1. Giang Ơi Radio -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">1</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/GiangOiRadio.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Giang Ơi Radio" data-image="Podcast/GiangOiRadio.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Giang Ơi Radio</h4>
+                <p class="text-gray-400">Radio Show</p>
+              </div>
+              <!-- 2. Hiếu TV -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">2</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/HieuTV.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Hiếu TV" data-image="Podcast/HieuTV.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Hiếu TV</h4>
+                <p class="text-gray-400">TV Channel</p>
+              </div>
+              <!-- 3. The Present Writer -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">3</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/ThePresentWriter.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="The Present Writer" data-image="Podcast/ThePresentWriter.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">The Present Writer</h4>
+                <p class="text-gray-400">Writer & Podcast</p>
+              </div>
+              <!-- 4. Duy Thanh Nguyen -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">4</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/DuyThanhNguyen.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Duy Thanh Nguyen" data-image="Podcast/DuyThanhNguyen.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Duy Thanh Nguyen</h4>
+                <p class="text-gray-400">Personal Channel</p>
+              </div>
+              <!-- 5. Have a sip -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">5</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/HaveASip.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Have a sip" data-image="Podcast/HaveASip.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Have a sip</h4>
+                <p class="text-gray-400">Lifestyle Podcast</p>
+              </div>
+              <!-- 6. TED TALKS DAILY -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">6</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/TEDTALKSDAILY.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="TED TALKS DAILY" data-image="Podcast/TEDTALKSDAILY.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">TED TALKS DAILY</h4>
+                <p class="text-gray-400">Motivational Talks</p>
+              </div>
+              <!-- 7. Amateur Psychology -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">7</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/AmateurPsychology.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Amateur Psychology" data-image="Podcast/AmateurPsychology.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Amateur Psychology</h4>
+                <p class="text-gray-400">Psychology Podcast</p>
+              </div>
+              <!-- 8. Thầy Thích Minh Niệm -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">8</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/ThayThichMinhNiem.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Thầy Thích Minh Niệm" data-image="Podcast/ThayThichMinhNiem.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Thầy Thích Minh Niệm</h4>
+                <p class="text-gray-400">Educational Podcast</p>
+              </div>
+              <!-- 9. Trì Kỷ Cảm Xúc -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">9</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/TriKyCamXuc.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Trì Kỷ Cảm Xúc" data-image="Podcast/TriKyCamXuc.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Trì Kỷ Cảm Xúc</h4>
+                <p class="text-gray-400">Emotional Wellbeing</p>
+              </div>
+              <!-- 10. Mây Podcast -->
+              <div class="min-w-[20%] text-center p-2">
+                <div class="relative inline-block">
+                  <div class="order-circle absolute top-2 left-2 w-6 h-6 bg-red-500 text-white text-xs flex items-center justify-center rounded-full font-bold z-20">10</div>
+                  <div class="absolute inset-0 bg-blue-700 transform translate-x-2 translate-y-2 rounded-lg"></div>
+                  <img src="Podcast/MayPodcast.jpg" class="relative z-10 rounded-lg playlist-item w-full h-40 object-cover" data-title="Mây Podcast" data-image="Podcast/MayPodcast.jpg" />
+                </div>
+                <h4 class="text-white text-xl mt-2">Mây Podcast</h4>
+                <p class="text-gray-400">Podcast</p>
+              </div>
+            </div>
+          </div>
+          <!-- Nút phải -->
+          <button id="nextBtn" class="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <!-- GỢI Ý -->
+        <h3 class="text-2xl font-bold my-6 text-blue-400"><i class="fas fa-headphones-alt mr-2"></i>CÓ THỂ BẠN SẼ THÍCH KÊNH NÀY</h3>
+        <div id="suggestedContainer" class="grid grid-cols-5 gap-6"></div>
+      </div>
+    </div>
+    <!-- Các file JS khác -->
+    <script src="podcast.js"></script><script src="main.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </body>
+</html>

@@ -1,0 +1,281 @@
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>
+        Music App
+    </title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* Màn hình loading */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        table {
+        width: 100%;
+        table-layout: auto;
+        border-collapse: collapse;
+        }
+        
+        td:nth-child(4) {
+        text-align: justify;
+        text-justify: inter-word;
+        word-wrap: break-word;
+        white-space: normal;
+        }
+        
+        td:nth-child(4) ul {
+        width: 100%;
+        display: block;
+        padding-left: 1.2rem;
+        }
+        
+        td {
+    font-size: 24px; /* Điều chỉnh kích thước chữ theo ý muốn */
+}
+
+th {
+    font-size: 24px; /* Tăng kích thước chữ trong tiêu đề bảng */
+    font-weight: bold; /* Làm đậm tiêu đề */
+}
+        
+        ul {
+        padding-left: 1.2rem; /* Đảm bảo danh sách không bị lệch */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white onload=" checkSession()">
+    <!-- Màn hình loading -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+    </div>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div class="bg-gray-800 text-white w-1/5 p-4 flex flex-col justify-between">
+            <div>
+                <!-- Form đăng nhập -->
+                <div id="login-form" class="mb-6">
+                    <h2 class="text-lg font-bold mb-2">Đăng nhập</h2>
+                    <input id="username" class="w-full p-2 mb-2 rounded bg-gray-700" type="text" placeholder="Tài khoản"/>
+                    <input id="password" class="w-full p-2 mb-2 rounded bg-gray-700" type="password" placeholder="Mật khẩu"/>
+                    <button onclick="checkLogin()" class="w-full bg-blue-500 text-white px-4 py-2 rounded transition hover:bg-blue-700">Đăng nhập</button>
+                </div>
+
+                <!-- Thông tin người dùng (ẩn nếu chưa đăng nhập) -->
+                <div id="user-info" class="hidden">
+                    <div class="flex items-center mb-6">
+                        <img alt="User avatar" class="rounded-full mr-2" height="50" src="https://storage.googleapis.com/a1aa/image/t8Fv8R63E4Rb2PtstNHWbhnoQPO6MJbUIrYhIWlNkTA.jpg" width="50"/>
+                        <span>Tài khoản</span>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-2">
+                        <a href="index.html" class="hover:text-blue-400 transition">MENU</a>
+                    </h2>
+                    <ul>
+                        <li class="mb-2 text-lg font-semibold">
+                            <a href="nhac.html" class="hover:text-blue-400 transition">Nhạc</a>
+                        </li>
+                        <li class="mb-2 text-lg font-semibold">
+                            <a href="nghe-si.html" class="hover:text-blue-400 transition">Nghệ sĩ</a>
+                        </li>
+                        <li class="mb-2 text-lg font-semibold">
+                            <a href="podcast.html" class="hover:text-blue-400 transition">Podcast</a>
+                        </li>
+                        <li class="mb-2 text-lg font-semibold">
+                            <a href="thong-tin-phat-trien-trang-web.html" class="hover:text-blue-400 transition">
+                                Thông tin phát triển trang web
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="w-full p-4 bg-gray-900 rounded-lg">
+                <h2 class="text-white text-lg font-bold">Truy cập trong tuần</h2>
+                <div id="traffic-chart" class="flex items-end h-60 space-x-2"></div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="w-4/5 p-4">
+            <div class="flex items-center justify-end mb-6">
+                <div class="relative w-3/5">
+                    <input class="w-full p-2 rounded-full border border-gray-300 bg-gray-800 text-white pl-10" placeholder="Tìm kiếm bài hát, nghệ sĩ, podcast,.." type="text"/>
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-500">
+      </i>
+                    <i class="fas fa-microphone absolute right-3 top-3 text-gray-500">
+      </i>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-4">Danh sách nhiệm vụ</h2>
+            <table class="w-full text-left border-collapse border border-gray-700">
+                <thead>
+                    <tr class="bg-gray-800 text-white">
+                        <th class="border border-gray-700 p-3 text-center" style="width: 15%;">Ảnh</th>
+                        <th class="border border-gray-700 p-3"style="width: 20%;">Tên</th>
+                        <th class="border border-gray-700 p-3 text-center"style="width: 10%;">Lớp</th>
+                        <th class="border border-gray-700 p-3"style="width: 55%;">Nhiệm vụ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="bg-gray-700 text-white">
+                        <td class="border border-gray-700 p-3 text-center"><img src="./AVT/KhanhLinh.JPG" alt="Nguyễn Lê Khánh Linh" class="w-[150px] h-[150px] rounded-full mx-auto">
+                        </td>
+                        <td class="border border-gray-700 p-3">Nguyễn Lê Khánh Linh</td>
+                        <td class="border border-gray-700 p-3 text-center">12 Nhật</td>
+                        <td class="border border-gray-700 p-3">
+                            <ul class="list-disc pl-5">
+                                <li>Thiết kế cấu trúc trang web bằng HTML, đảm bảo bố cục hợp lý.</li>
+                                <li>Viết mã HTML cho các trang con như trang chủ, giới thiệu, liên hệ.</li>
+                                <li>Sử dụng CSS để định dạng giao diện trang web.</li>
+                                <li>Đảm bảo tính tương thích trên các thiết bị khác nhau.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-800 text-white">
+                        <td class="border border-gray-700 p-3 text-center"><img src="./AVT/AnhThu.JPG" alt="Huỳnh Lê Anh Thư" class="w-[150px] h-[150px] rounded-full mx-auto">
+                        </td>
+                        <td class="border border-gray-700 p-3">Huỳnh Lê Anh Thư</td>
+                        <td class="border border-gray-700 p-3 text-center">12 Nhật</td>
+                        <td class="border border-gray-700 p-3">
+                            <ul class="list-disc pl-5">
+                                <li>Xây dựng giao diện trang web bằng HTML và CSS.</li>
+                                <li>Chỉnh sửa và tối ưu CSS để trang web đẹp hơn.</li>
+                                <li>Thêm hiệu ứng CSS (hover, transition, animation).</li>
+                                <li>Kiểm tra hiển thị trên nhiều trình duyệt khác nhau.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-700 text-white">
+                        <td class="border border-gray-700 p-3 text-center"><img src="./AVT/NhaCa.JPG" alt="Nguyễn Ngọc Nhã Ca" class="w-[150px] h-[150px] rounded-full mx-auto">
+                        </td>
+                        <td class="border border-gray-700 p-3">Nguyễn Ngọc Nhã Ca</td>
+                        <td class="border border-gray-700 p-3 text-center">12 Nhật</td>
+                        <td class="border border-gray-700 p-3">
+                            <ul class="list-disc pl-5">
+                                <li>Tìm kiếm nội dung phù hợp để đưa vào trang web.</li>
+                                <li>Chọn lọc thông tin chính xác, hữu ích.</li>
+                                <li>Thu thập hình ảnh, icon, video cho trang web.</li>
+                                <li>Đảm bảo nội dung không vi phạm bản quyền.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr class="bg-gray-800 text-white">
+                        <td class="border border-gray-700 p-3 text-center"><img src="./AVT/LamNghi.JPG" alt="Hoàng Nguyễn Lam Nghi" class="w-[150px] h-[150px] rounded-full mx-auto">
+                        </td>
+                        <td class="border border-gray-700 p-3">Hoàng Nguyễn Lam Nghi</td>
+                        <td class="border border-gray-700 p-3 text-center">12 Anh 1</td>
+                        <td class="border border-gray-700 p-3">
+                            <ul class="list-disc pl-5">
+                                <li>Thu thập nội dung và tài nguyên cho trang web.</li>
+                                <li>Tìm kiếm văn bản mô tả, tiêu đề, slogan phù hợp.</li>
+                                <li>Đề xuất ý tưởng giúp trang web hấp dẫn hơn.</li>
+                                <li>Cung cấp hình ảnh, video, icon theo yêu cầu.</li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
+    document.getElementById("loading-screen").style.display = "none";
+    }, 1000);
+    });
+    function checkLogin() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      if (username === "admin" && password === "123") {
+        localStorage.setItem("loggedIn", "true");
+        document.getElementById("login-form").classList.add("hidden");
+        document.getElementById("user-info").classList.remove("hidden");
+      } else {
+        alert("Sai tài khoản hoặc mật khẩu!");
+      }
+    }
+
+    function checkSession() {
+      if (localStorage.getItem("loggedIn") === "true") {
+        document.getElementById("login-form").classList.add("hidden");
+        document.getElementById("user-info").classList.remove("hidden");
+      }
+    }
+    function recordTraffic() {
+    fetch("record_traffic.php").then(response => response.text()).then(console.log);
+    }
+    window.onload = recordTraffic;
+    document.addEventListener("DOMContentLoaded", function () {
+    fetch("get_traffic.php")
+    .then(response => response.json())
+    .then(data => {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const maxVisits = Math.max(...Object.values(data), 1); // Tránh chia cho 0
+    
+    let chartHtml = "";
+    days.forEach(day => {
+    let visitCount = data[day] || 0;
+    let height = visitCount > 0 ? (visitCount / maxVisits) * 150 + 20 : 20; // Đảm bảo cột không bị ẩn
+    
+    chartHtml += `
+    <div class="flex flex-col items-center w-10">
+        <span class="text-xs text-white mb-1">${visitCount}</span> <!-- Hiển thị số trên cột -->
+        <div class="w-6 bg-blue-400 rounded-md transition-all duration-300" style="height: ${height}px;"></div>
+        <span class="text-xs text-white mt-1">${day.substring(0, 3)}</span>
+    </div>
+    `;
+    });
+    
+    document.getElementById("traffic-chart").innerHTML = chartHtml;
+    })
+    .catch(error => console.error("Lỗi khi tải dữ liệu:", error));
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</html>
